@@ -70,8 +70,20 @@ router.get("/tales/featured", async (req, res) => {
       .select()
       .from(talesTable)
       .where(eq(talesTable.isFeatured, true))
-      .orderBy(talesTable.createdAt);
-    res.json(tales);
+      .orderBy(talesTable.id);
+
+    if (tales.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86_400_000);
+    const dailyTale = tales[dayOfYear % tales.length];
+
+    res.setHeader("Cache-Control", "no-store");
+    res.json([dailyTale]);
   } catch (err) {
     req.log.error(err, "Error fetching featured tales");
     res.status(500).json({ error: "Internal server error" });

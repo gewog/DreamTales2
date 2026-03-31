@@ -5,10 +5,6 @@ import {
   useGetCategories,
   useCreateTale,
   useDeleteTale,
-  getGetTalesQueryKey,
-  getGetFeaturedTalesQueryKey,
-  getGetCategoriesQueryKey,
-  getGetTalesSummaryQueryKey,
   CreateTaleInputAgeGroup,
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
@@ -44,10 +40,7 @@ export default function Admin() {
   }, [categories]);
 
   const invalidateAll = () => {
-    queryClient.invalidateQueries({ queryKey: getGetTalesQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetFeaturedTalesQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetCategoriesQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetTalesSummaryQueryKey() });
+    queryClient.invalidateQueries();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
