@@ -53,7 +53,7 @@ export default function Admin() {
 
   return (
     <Layout>
-      <div className="flex-1 overflow-y-auto px-6 pt-12 pb-24 bg-muted/30">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 bg-muted/30 min-h-full">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-serif font-bold">Админ Панель</h1>
           <button 

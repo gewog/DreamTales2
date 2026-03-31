@@ -12,11 +12,11 @@ export default function Favorites() {
 
   return (
     <Layout>
-      <div className="flex-1 overflow-y-auto px-6 pt-12 pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
         <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Избранное</h1>
         <p className="text-muted-foreground mb-8">Ваши любимые сказки всегда под рукой.</p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {isLoading ? (
             Array.from({ length: 4 }).map((_, i) => <TaleCardSkeleton key={i} />)
           ) : favoriteTales.length === 0 ? (

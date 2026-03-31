@@ -8,116 +8,121 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
   const [selectedAge, setSelectedAge] = useState<string | undefined>();
 
-  const { data: categories, isLoading: isLoadingCategories } = useGetCategories();
-  const { data: featuredTales, isLoading: isLoadingFeatured } = useGetFeaturedTales();
-  
+  const { data: categories } = useGetCategories();
+  const { data: featuredTales } = useGetFeaturedTales();
+
   const { data: tales, isLoading: isLoadingTales } = useGetTales({
     category: selectedCategory,
-    ageGroup: selectedAge
+    ageGroup: selectedAge,
   });
 
   const ageGroups = ["0-3", "3-5", "5-7", "7+"];
 
   return (
     <Layout>
-      <div className="flex-1 overflow-y-auto pb-10">
-        {/* Hero Section */}
-        <section className="relative pt-12 pb-8 px-6 bg-gradient-to-b from-primary/10 to-background rounded-b-[40px] mb-6">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center border-2 border-primary/30 shrink-0">
-              <span className="text-2xl" role="img" aria-label="owl">🦉</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-serif font-bold text-foreground">Добро пожаловать,</h1>
-              <p className="text-muted-foreground text-sm font-medium">в Сказочный мир!</p>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+
+        {/* Hero */}
+        <section className="relative rounded-3xl overflow-hidden mb-8 shadow-lg border border-primary/20">
+          <div className="relative aspect-[21/7] sm:aspect-[21/6] w-full">
+            <img
+              src="/hero-bg.png"
+              alt="Волшебный лес"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+            <div className="absolute inset-0 flex flex-col justify-center p-6 sm:p-10">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-white drop-shadow-lg mb-2">
+                Сказочный мир
+              </h1>
+              <p className="text-white/80 text-sm sm:text-base font-medium drop-shadow">
+                Волшебные истории для маленьких читателей
+              </p>
             </div>
           </div>
+        </section>
 
-          <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-lg border border-primary/20 mb-8">
-            <img src="/hero-bg.png" alt="Magical forest" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 text-white">
-              <h2 className="text-xl font-serif font-bold drop-shadow-md">Время волшебства</h2>
-              <p className="text-sm opacity-90 drop-shadow-md">Выберите сказку на ночь</p>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="space-y-4">
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
+        {/* Filters */}
+        <section className="mb-6 space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(undefined)}
+              className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                !selectedCategory
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              Все сказки
+            </button>
+            {categories?.map((c) => (
               <button
-                onClick={() => setSelectedCategory(undefined)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors ${
-                  !selectedCategory ? "bg-primary text-primary-foreground shadow-md" : "bg-muted text-muted-foreground"
+                key={c.id}
+                onClick={() => setSelectedCategory(selectedCategory === c.name ? undefined : c.name)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                  selectedCategory === c.name
+                    ? "bg-secondary text-secondary-foreground shadow-md"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                Все сказки
+                {c.emoji && <span>{c.emoji}</span>}
+                {c.name}
               </button>
-              {categories?.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setSelectedCategory(c.name)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-colors flex items-center gap-1.5 ${
-                    selectedCategory === c.name ? "bg-secondary text-secondary-foreground shadow-md" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {c.emoji && <span>{c.emoji}</span>}
-                  {c.name}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6">
-              {ageGroups.map((age) => (
-                <button
-                  key={age}
-                  onClick={() => setSelectedAge(selectedAge === age ? undefined : age)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap text-xs font-bold transition-colors border ${
-                    selectedAge === age ? "border-accent bg-accent/10 text-accent" : "border-border bg-transparent text-muted-foreground"
-                  }`}
-                >
-                  {age} лет
-                </button>
-              ))}
-            </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ageGroups.map((age) => (
+              <button
+                key={age}
+                onClick={() => setSelectedAge(selectedAge === age ? undefined : age)}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 border ${
+                  selectedAge === age
+                    ? "border-accent bg-accent/10 text-accent"
+                    : "border-border bg-transparent text-muted-foreground hover:border-accent/40"
+                }`}
+              >
+                {age} лет
+              </button>
+            ))}
           </div>
         </section>
 
         {/* Featured Tale */}
         {!selectedCategory && !selectedAge && featuredTales && featuredTales.length > 0 && (
-          <section className="px-6 mb-8">
-            <h3 className="text-xl font-serif font-bold mb-4 flex items-center gap-2">
+          <section className="mb-8">
+            <h2 className="text-xl font-serif font-bold mb-4 flex items-center gap-2">
               <span className="text-primary">✨</span> Сказка дня
-            </h3>
+            </h2>
             <TaleCard tale={featuredTales[0]} featured />
           </section>
         )}
 
         {/* Tales Grid */}
-        <section className="px-6">
-          <h3 className="text-xl font-serif font-bold mb-4">
+        <section>
+          <h2 className="text-xl font-serif font-bold mb-4">
             {selectedCategory ? `Сказки: ${selectedCategory}` : "Каталог сказок"}
-          </h3>
-          
-          <div className="grid grid-cols-2 gap-4">
-            {isLoadingTales ? (
-              Array.from({ length: 4 }).map((_, i) => <TaleCardSkeleton key={i} />)
-            ) : tales?.length === 0 ? (
-              <div className="col-span-full py-10 text-center text-muted-foreground">
-                <p>К сожалению, сказок не найдено.</p>
-              </div>
-            ) : (
-              tales?.map((tale, i) => (
+          </h2>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {isLoadingTales
+              ? Array.from({ length: 8 }).map((_, i) => <TaleCardSkeleton key={i} />)
+              : tales?.length === 0
+              ? (
+                <div className="col-span-full py-16 text-center text-muted-foreground">
+                  <p className="text-lg">К сожалению, сказок не найдено.</p>
+                </div>
+              )
+              : tales?.map((tale, i) => (
                 <motion.div
+                  key={tale.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  key={tale.id}
+                  transition={{ delay: i * 0.04 }}
                 >
                   <TaleCard tale={tale} />
                 </motion.div>
               ))
-            )}
+            }
           </div>
         </section>
       </div>
