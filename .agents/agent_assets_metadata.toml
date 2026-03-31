@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "cJFPhZBUYy5l95doGU9hu"
+uri = "file://artifacts/skazki/public/hero-bg.png"
+type = "image"
+title = "Magical storybook hero illustration"

@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API specification for Сказочный мир - children's fairy tales app
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: tales
+    description: Fairy tales operations
+  - name: categories
+    description: Tale categories
 paths:
   /healthz:
     get:
@@ -24,6 +27,152 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /tales:
+    get:
+      operationId: getTales
+      tags: [tales]
+      summary: Get all tales
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: ageGroup
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of tales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tale"
+    post:
+      operationId: createTale
+      tags: [tales]
+      summary: Create a new tale (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaleInput"
+      responses:
+        "201":
+          description: Tale created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tale"
+
+  /tales/{id}:
+    get:
+      operationId: getTale
+      tags: [tales]
+      summary: Get a single tale by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tale details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tale"
+        "404":
+          description: Tale not found
+    put:
+      operationId: updateTale
+      tags: [tales]
+      summary: Update a tale (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaleInput"
+      responses:
+        "200":
+          description: Tale updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tale"
+    delete:
+      operationId: deleteTale
+      tags: [tales]
+      summary: Delete a tale (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Tale deleted
+
+  /categories:
+    get:
+      operationId: getCategories
+      tags: [categories]
+      summary: Get all categories
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /tales/stats/summary:
+    get:
+      operationId: getTalesSummary
+      tags: [tales]
+      summary: Get tales summary stats
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalesSummary"
+
+  /tales/featured:
+    get:
+      operationId: getFeaturedTales
+      tags: [tales]
+      summary: Get featured/popular tales
+      responses:
+        "200":
+          description: Featured tales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tale"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +183,111 @@ components:
       required:
         - status
 
+    Tale:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        category:
+          type: string
+        ageGroup:
+          type: string
+          enum: ["0-3", "3-5", "5-7", "7+"]
+        duration:
+          type: integer
+          description: Estimated reading time in minutes
+        isFeatured:
+          type: boolean
+        author:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - content
+        - imageUrl
+        - category
+        - ageGroup
+        - duration
+        - isFeatured
+        - createdAt
+
+    CreateTaleInput:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+        category:
+          type: string
+        ageGroup:
+          type: string
+          enum: ["0-3", "3-5", "5-7", "7+"]
+        duration:
+          type: integer
+        isFeatured:
+          type: boolean
+        author:
+          type: string
+      required:
+        - title
+        - content
+        - imageUrl
+        - category
+        - ageGroup
+        - duration
+        - isFeatured
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        emoji:
+          type: string
+      required:
+        - id
+        - name
+        - slug
+
+    TalesSummary:
+      type: object
+      properties:
+        totalTales:
+          type: integer
+        totalCategories:
+          type: integer
+        featuredCount:
+          type: integer
+        ageGroups:
+          type: array
+          items:
+            type: object
+            properties:
+              ageGroup:
+                type: string
+              count:
+                type: integer
+            required:
+              - ageGroup
+              - count
+      required:
+        - totalTales
+        - totalCategories
+        - featuredCount
+        - ageGroups

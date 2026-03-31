@@ -16,6 +16,17 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Artifacts
+
+### `artifacts/skazki` (`@workspace/skazki`)
+
+Mobile-first PWA "Сказочный мир" — children's fairy tales web app (React + Vite).
+
+- Pages: `/` (catalog/home), `/tale/:id` (reading), `/favorites`, `/admin`
+- Features: voice reading (Web Speech API, Russian), children mode (UI lock), favorites (localStorage)
+- Tailwind design with Nunito + Fraunces fonts, warm orange/pastel palette
+- Routes/stories are fetched from `/api` via `@workspace/api-client-react` hooks
+
 ## Structure
 
 ```text
