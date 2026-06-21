@@ -6,6 +6,13 @@ import { requireAdminAuth } from "../middleware/admin-auth";
 
 const router: IRouter = Router();
 
+function parseRouteId(raw: string | string[]): number | null {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  if (!value) return null;
+  const id = Number.parseInt(value, 10);
+  return Number.isNaN(id) ? null : id;
+}
+
 router.get("/tales", async (req, res) => {
   try {
     const { category, ageGroup, search } = req.query as {
@@ -93,8 +100,8 @@ router.get("/tales/featured", async (req, res) => {
 
 router.get("/tales/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
+    const id = parseRouteId(req.params.id);
+    if (id === null) {
       res.status(400).json({ error: "Invalid ID" });
       return;
     }
@@ -127,8 +134,8 @@ router.post("/tales", requireAdminAuth, async (req, res) => {
 
 router.put("/tales/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
+    const id = parseRouteId(req.params.id);
+    if (id === null) {
       res.status(400).json({ error: "Invalid ID" });
       return;
     }
@@ -155,8 +162,8 @@ router.put("/tales/:id", requireAdminAuth, async (req, res) => {
 
 router.delete("/tales/:id", requireAdminAuth, async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
+    const id = parseRouteId(req.params.id);
+    if (id === null) {
       res.status(400).json({ error: "Invalid ID" });
       return;
     }
