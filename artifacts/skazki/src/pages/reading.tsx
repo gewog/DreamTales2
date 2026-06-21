@@ -11,7 +11,7 @@ export default function Reading() {
   const [, setLocation] = useLocation();
   const id = Number(params.id);
 
-  const { data: tale, isLoading } = useGetTale(id, { query: { enabled: !!id } });
+  const { data: tale, isLoading } = useGetTale(id);
   const { isPlaying, togglePlay, speed, setSpeed, stop } = useVoiceReader(tale?.content || "");
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isLocked, toggleLock } = useLock();
