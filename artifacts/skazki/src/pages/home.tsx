@@ -24,13 +24,9 @@ export default function Home() {
 
         {/* Hero */}
         <section className="relative rounded-3xl overflow-hidden mb-8 shadow-lg border border-primary/20">
-          <div className="relative aspect-[21/7] sm:aspect-[21/6] w-full">
-            <img
-              src="/hero-bg.png"
-              alt="Волшебный лес"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
+          <div className="relative aspect-[21/7] sm:aspect-[21/6] w-full bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.25),transparent_50%)]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/15 to-transparent" />
             <div className="absolute inset-0 flex flex-col justify-center p-6 sm:p-10">
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-white drop-shadow-lg mb-2">
                 Сказочный мир

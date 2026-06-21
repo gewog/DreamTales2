@@ -8,8 +8,10 @@ import {
   CreateTaleInputAgeGroup,
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
-import { Plus, Trash2, Loader2, Star } from "lucide-react";
+import { Plus, Trash2, Loader2, Star, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const ADMIN_KEY_STORAGE = "dreamtales_admin_api_key";
 
 const DEFAULT_FORM = {
   title: "",
@@ -30,8 +32,67 @@ export default function Admin() {
   const deleteTale = useDeleteTale();
   const { toast } = useToast();
 
+  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [keyInput, setKeyInput] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState(DEFAULT_FORM);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+    if (stored) setAdminKey(stored);
+  }, []);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = keyInput.trim();
+    if (!trimmed) return;
+    sessionStorage.setItem(ADMIN_KEY_STORAGE, trimmed);
+    setAdminKey(trimmed);
+    setKeyInput("");
+    queryClient.invalidateQueries();
+    toast({ title: "Ключ сохранён для этой сессии" });
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+    setAdminKey(null);
+    queryClient.invalidateQueries();
+  };
+
+  if (!adminKey) {
+    return (
+      <Layout>
+        <div className="max-w-md mx-auto px-4 py-16">
+          <div className="bg-card p-8 rounded-3xl border border-border shadow-sm space-y-4">
+            <div className="flex items-center gap-3">
+              <KeyRound className="w-8 h-8 text-primary" />
+              <h1 className="text-2xl font-serif font-bold">Вход в админку</h1>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Для добавления и удаления сказок нужен секретный ключ{" "}
+              <code className="text-xs bg-muted px-1 py-0.5 rounded">ADMIN_API_KEY</code>{" "}
+              с сервера. Ключ хранится только в этой вкладке браузера.
+            </p>
+            <form onSubmit={handleAdminLogin} className="space-y-3">
+              <input
+                type="password"
+                value={keyInput}
+                onChange={(e) => setKeyInput(e.target.value)}
+                placeholder="Введите ADMIN_API_KEY"
+                className="w-full bg-muted rounded-xl p-3 text-base border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button
+                type="submit"
+                className="w-full h-12 bg-primary text-primary-foreground rounded-xl font-bold"
+              >
+                Войти
+              </button>
+            </form>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   useEffect(() => {
     if (categories && categories.length > 0 && !formData.category) {
@@ -90,12 +151,20 @@ export default function Admin() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 min-h-full">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-serif font-bold">Админ Панель</h1>
-          <button
-            onClick={() => setIsFormOpen(!isFormOpen)}
-            className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
-          >
-            <Plus className={`w-6 h-6 transition-transform duration-200 ${isFormOpen ? "rotate-45" : ""}`} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Выйти
+            </button>
+            <button
+              onClick={() => setIsFormOpen(!isFormOpen)}
+              className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+            >
+              <Plus className={`w-6 h-6 transition-transform duration-200 ${isFormOpen ? "rotate-45" : ""}`} />
+            </button>
+          </div>
         </div>
 
         {isFormOpen && (

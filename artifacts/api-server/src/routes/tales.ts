@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { talesTable, categoriesTable, insertTaleSchema } from "@workspace/db/schema";
 import { eq, ilike, and, sql } from "drizzle-orm";
+import { requireAdminAuth } from "../middleware/admin-auth";
 
 const router: IRouter = Router();
 
@@ -109,7 +110,7 @@ router.get("/tales/:id", async (req, res) => {
   }
 });
 
-router.post("/tales", async (req, res) => {
+router.post("/tales", requireAdminAuth, async (req, res) => {
   try {
     const parsed = insertTaleSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -124,7 +125,7 @@ router.post("/tales", async (req, res) => {
   }
 });
 
-router.put("/tales/:id", async (req, res) => {
+router.put("/tales/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
@@ -152,7 +153,7 @@ router.put("/tales/:id", async (req, res) => {
   }
 });
 
-router.delete("/tales/:id", async (req, res) => {
+router.delete("/tales/:id", requireAdminAuth, async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {

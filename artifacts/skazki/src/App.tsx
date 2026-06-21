@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { setAuthTokenGetter } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LockProvider } from "@/contexts/lock-context";
@@ -11,6 +12,9 @@ import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
+const ADMIN_KEY_STORAGE = "dreamtales_admin_api_key";
+
+setAuthTokenGetter(() => sessionStorage.getItem(ADMIN_KEY_STORAGE));
 
 function Router() {
   return (
